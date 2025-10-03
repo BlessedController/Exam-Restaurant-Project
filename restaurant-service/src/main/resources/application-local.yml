@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/respro_rs_db
+  kafka:
+    bootstrap-servers: localhost:9092
+
+redis:
+  server:
+    url: redis://localhost:6380
+

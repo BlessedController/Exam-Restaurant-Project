@@ -1,0 +1,120 @@
+services:
+
+  #Restaurant MicroService
+#  restaurant-service:
+#    container_name: restaurant-service
+#    build:
+#      context: ./restaurant-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://restaurant_service_postgres:5432/${RESTAURANT_DB}
+#      SPRING_DATASOURCE_USERNAME: "${RESTAURANT_USER}"
+#      SPRING_DATASOURCE_PASSWORD: "${RESTAURANT_PASS}"
+#      SPRING_PROFILES_ACTIVE: docker
+#    networks:
+#      - restaurant-net
+#
+#  #Menu MicroService
+#  menu-service:
+#    container_name: menu-service
+#    build:
+#      context: ./menu-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://menu_service_postgres:5432/${RESTAURANT_DB}
+#      SPRING_DATASOURCE_USERNAME: "${RESTAURANT_USER}"
+#      SPRING_DATASOURCE_PASSWORD: "${RESTAURANT_PASS}"
+#      SPRING_PROFILES_ACTIVE: docker
+#    networks:
+#      - restaurant-net
+
+  #Restaurant ms database
+  restaurant_service_postgres:
+    container_name: restaurant_service_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "${RESTAURANT_DB}"
+      POSTGRES_USER: "${RESTAURANT_USER}"
+      POSTGRES_PASSWORD: "${RESTAURANT_PASS}"
+    ports:
+      - "5433:5432"
+    networks:
+      - restaurant-net
+
+  #Menu ms database
+  menu_service_postgres:
+    container_name: menu_service_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "${MENU_DB}"
+      POSTGRES_USER: "${MENU_USER}"
+      POSTGRES_PASSWORD: "${MENU_PASS}"
+    ports:
+      - "5434:5432"
+    networks:
+      - restaurant-net
+
+
+  #redis
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6380:6379"
+    networks:
+      - restaurant-net
+
+  #zookeeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    networks:
+      - restaurant-net
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "${ZOOKEEPER_CLIENT_PORT}"
+      ZOOKEEPER_TICK_TIME: "${ZOOKEEPER_TICK_TIME}"
+
+  #kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    networks:
+      - restaurant-net
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: "${KAFKA_BROKER_ID}"
+      KAFKA_ZOOKEEPER_CONNECT: "${KAFKA_ZOOKEEPER_CONNECT}"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "${KAFKA_TRANSACTION_STATE_LOG_MIN_ISR}"
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "${KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}"
+      KAFKA_LISTENERS: "${KAFKA_LISTENERS}"
+      KAFKA_ADVERTISED_LISTENERS: "${KAFKA_ADVERTISED_LISTENERS}"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "${KAFKA_INTER_BROKER_LISTENER_NAME}"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    networks:
+      - restaurant-net
+    depends_on:
+      - kafka
+    ports:
+      - "7777:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=restaurant_cluster
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+
+networks:
+  restaurant-net:
+    driver: bridge

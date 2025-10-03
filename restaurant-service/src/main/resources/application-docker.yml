@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://restaurant_service_postgres:5432/respro_rs_db
+  kafka:
+    bootstrap-servers: kafka:9093
+
+redis:
+  server:
+    url: redis://redis:6379

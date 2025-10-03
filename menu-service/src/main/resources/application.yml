@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: menu-service
+  profiles:
+    active: local
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    username: respro_mns_user
+    password: dbhunter
+    driver-class-name: org.postgresql.Driver
+  data:
+    web:
+      pageable:
+        max-page-size: 20
+        default-page-size: 10
+        page-parameter: page
+        size-parameter: size
+        one-indexed-parameters: true
+
+server:
+  port: 8081

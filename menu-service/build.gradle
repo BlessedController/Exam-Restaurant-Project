@@ -1,0 +1,69 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.texnoera'
+version = '0.0.1-SNAPSHOT'
+description = 'Menu Microservice'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2025.0.0")
+}
+
+dependencies {
+	//spring web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// liquibase
+//	implementation 'org.liquibase:liquibase-core'
+
+	//jakarta validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	//feign client
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	//kafka message broker
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	//lombok
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	//testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

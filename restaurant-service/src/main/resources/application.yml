@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: restaurant-service
+  profiles:
+    active: local
+  data:
+    web:
+      pageable:
+        max-page-size: 20
+        default-page-size: 10
+        page-parameter: page
+        size-parameter: size
+        one-indexed-parameters: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    username: respro_rs_user
+    password: dbhunter
+    driver-class-name: org.postgresql.Driver
+
+server:
+  port: 8080

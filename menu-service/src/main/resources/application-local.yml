@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/respro_mns_db
+  kafka:
+    bootstrap-servers: localhost:9092
